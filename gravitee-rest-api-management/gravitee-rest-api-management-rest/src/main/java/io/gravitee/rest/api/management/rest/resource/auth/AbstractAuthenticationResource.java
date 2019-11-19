@@ -134,7 +134,7 @@ abstract class AbstractAuthenticationResource {
         tokenEntity.setType(BEARER);
         tokenEntity.setToken(sign);
 
-        final Cookie bearerCookie = jwtCookieGenerator.generate("Bearer%20" + sign);
+        final Cookie bearerCookie = jwtCookieGenerator.generate("Bearer%20" + sign, false);
         servletResponse.addCookie(bearerCookie);
 
         return Response

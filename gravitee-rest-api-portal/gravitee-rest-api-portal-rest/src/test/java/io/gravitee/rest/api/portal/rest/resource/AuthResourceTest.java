@@ -15,31 +15,24 @@
  */
 package io.gravitee.rest.api.portal.rest.resource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-
-import javax.servlet.http.Cookie;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-
+import io.gravitee.common.http.HttpStatusCode;
+import io.gravitee.rest.api.idp.api.authentication.UserDetails;
+import io.gravitee.rest.api.portal.rest.model.Token;
+import io.gravitee.rest.api.portal.rest.model.Token.TokenTypeEnum;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import io.gravitee.common.http.HttpStatusCode;
-import io.gravitee.rest.api.idp.api.authentication.UserDetails;
-import io.gravitee.rest.api.portal.rest.model.Token;
-import io.gravitee.rest.api.portal.rest.model.Token.TokenTypeEnum;
+import javax.servlet.http.Cookie;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Florent CHAMFROY (florent.chamfroy at graviteesource.com)
@@ -81,7 +74,7 @@ public class AuthResourceTest extends AbstractResourceTest {
         SecurityContextHolder.setContext(securityContext);
 
         Cookie bearer = new Cookie("FOO", "BAR");
-        doReturn(bearer).when(jwtCookieGenerator).generate(any());
+        doReturn(bearer).when(jwtCookieGenerator).generate(any(), eq(false));
         
         final Response response = target().path("login").request().post(null);
         assertEquals(HttpStatusCode.OK_200, response.getStatus());

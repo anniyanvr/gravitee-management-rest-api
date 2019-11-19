@@ -18,9 +18,9 @@ package io.gravitee.rest.api.security.cookies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
-import static io.gravitee.rest.api.service.common.JWTHelper.DefaultValues.DEFAULT_JWT_EXPIRE_AFTER;
-
 import javax.servlet.http.Cookie;
+
+import static io.gravitee.rest.api.service.common.JWTHelper.DefaultValues.DEFAULT_JWT_EXPIRE_AFTER;
 
 /**
  * @author Azize Elamrani (azize at gravitee.io)
@@ -35,13 +35,17 @@ public class JWTCookieGenerator {
     @Autowired
     private Environment environment;
 
-    public Cookie generate(final String value) {
-        final Cookie cookie = new Cookie("Auth-Graviteeio-APIM", value);
+    public Cookie generate(final String value, final boolean portal) {
+        final Cookie cookie = new Cookie("Auth-Graviteeio-APIM" + (portal ? "-Portal" : ""), value);
         cookie.setHttpOnly(true);
         cookie.setSecure(environment.getProperty("jwt.cookie-secure", Boolean.class, DEFAULT_JWT_COOKIE_SECURE));
         cookie.setPath(environment.getProperty("jwt.cookie-path", DEFAULT_JWT_COOKIE_PATH));
         cookie.setDomain(environment.getProperty("jwt.cookie-domain", DEFAULT_JWT_COOKIE_DOMAIN));
         cookie.setMaxAge(value == null? 0 : environment.getProperty("jwt.expire-after", Integer.class, DEFAULT_JWT_EXPIRE_AFTER));
         return cookie;
+    }
+
+    public boolean isPortalCookie(final String cookieName) {
+        return cookieName.endsWith("-Portal");
     }
 }

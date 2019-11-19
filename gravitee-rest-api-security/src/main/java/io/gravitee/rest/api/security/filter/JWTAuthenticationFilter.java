@@ -70,13 +70,15 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 
         String stringToken = req.getHeader(HttpHeaders.AUTHORIZATION);
 
+        final String authCookieNamePrefix = "Auth-Graviteeio-APIM";
+        String cookieName = "";
         if (isEmpty(stringToken) && req.getCookies() != null) {
-            final String authCookieName = "Auth-Graviteeio-APIM";
             final Optional<Cookie> optionalStringToken = Arrays.stream(req.getCookies())
-                    .filter(cookie -> authCookieName.equals(cookie.getName()))
+                    .filter(cookie -> cookie.getName().startsWith(authCookieNamePrefix))
                     .findAny();
             if (optionalStringToken.isPresent()) {
                 stringToken = decode(optionalStringToken.get().getValue(), defaultCharset().name());
+                cookieName = optionalStringToken.get().getName();
             }
         }
 
@@ -118,7 +120,7 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                             LOGGER.error(errorMessage);
                         }
                     }
-                    res.addCookie(jwtCookieGenerator.generate(null));
+                    res.addCookie(jwtCookieGenerator.generate(null, jwtCookieGenerator.isPortalCookie(cookieName)));
                     res.sendError(HttpStatusCode.UNAUTHORIZED_401);
                     return;
                 }
