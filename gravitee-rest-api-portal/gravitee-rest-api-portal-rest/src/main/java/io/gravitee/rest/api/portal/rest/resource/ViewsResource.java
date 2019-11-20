@@ -66,7 +66,6 @@ public class ViewsResource extends AbstractResource {
                 .stream()
                 .filter(v -> !v.isHidden())
                 .sorted(Comparator.comparingInt(ViewEntity::getOrder))
-                .map(v -> viewEnhancer.enhance(apis).apply(v))
                 .map(v-> viewMapper.convert(v, uriInfo.getBaseUriBuilder()))
                 .collect(Collectors.toList());
         
